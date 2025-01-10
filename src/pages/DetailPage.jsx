@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchUserById } from "../store/modules/usersSlice";
+import { fetchUserById, clearSelectedUser } from "../store/modules/usersSlice";
 
 const DetailPage = () => {
   const { id } = useParams();
@@ -11,6 +11,9 @@ const DetailPage = () => {
 
   useEffect(() => {
     dispatch(fetchUserById(id));
+    return () => {
+      dispatch(clearSelectedUser()); // Clear user on unmount
+    };
   }, [dispatch, id]);
 
   if (loading) {
