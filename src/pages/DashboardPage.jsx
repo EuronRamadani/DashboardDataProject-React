@@ -7,8 +7,7 @@ import {
   deleteUsers,
 } from "../store/modules/usersSlice";
 import { useNavigate } from "react-router-dom";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const DashboardPage = () => {
   const dispatch = useDispatch();
@@ -17,7 +16,7 @@ const DashboardPage = () => {
   const { paginatedUsers, currentPage, totalPages, loading, error, favorites } =
     useSelector((state) => state.users);
 
-  const [selectedUsers, setSelectedUsers] = useState([]); // Selected user IDs
+  const [selectedUsers, setSelectedUsers] = useState([]);
 
   useEffect(() => {
     dispatch(fetchUsers());
@@ -52,21 +51,38 @@ const DashboardPage = () => {
     setSelectedUsers([]);
   };
 
+  if (loading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center vh-100">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="d-flex justify-content-center align-items-center vh-100">
+        <div className="alert alert-danger text-center">
+          <strong>Error:</strong> {error}
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <>
-      <Header />
-      <main className="container mx-auto p-4">
-        <h2 className="text-2xl font-bold mb-4">Dashboard</h2>
-
-        {loading && <p>Loading users...</p>}
-        {error && <p className="text-red-500">Error: {error}</p>}
-
-        {!loading && !error && (
-          <>
-            <table className="table-auto w-full border-collapse border border-gray-300">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="border border-gray-300 px-4 py-2">
+    <div className="d-flex flex-column justify-content-center align-items-center vh-100">
+      <div className="container">
+        <div className="card shadow-lg">
+          <div className="card-header text-center bg-primary text-white">
+            <h2 className="mb-0">Dashboard</h2>
+          </div>
+          <div className="table-responsive">
+            <table className="table table-striped table-hover text-center align-middle">
+              <thead className="table-primary">
+                <tr>
+                  <th scope="col">
                     <input
                       type="checkbox"
                       onChange={handleSelectAll}
@@ -74,53 +90,44 @@ const DashboardPage = () => {
                         selectedUsers.length === paginatedUsers.length &&
                         selectedUsers.length > 0
                       }
+                      className="form-check-input"
                     />
                   </th>
-                  <th className="border border-gray-300 px-4 py-2">Name</th>
-                  <th className="border border-gray-300 px-4 py-2">Email</th>
-                  <th className="border border-gray-300 px-4 py-2">Favorite</th>
-                  <th className="border border-gray-300 px-4 py-2">Actions</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Email</th>
+                  <th scope="col">Favorite</th>
+                  <th scope="col">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {paginatedUsers.map((user) => (
-                  <tr
-                    key={user.id}
-                    className={
-                      favorites.includes(user.id) ? "bg-yellow-100" : ""
-                    }
-                  >
-                    <td className="border border-gray-300 px-4 py-2">
+                  <tr key={user.id}>
+                    <td>
                       <input
                         type="checkbox"
                         checked={selectedUsers.includes(user.id)}
                         onChange={() => handleSelectUser(user.id)}
+                        className="form-check-input"
                       />
                     </td>
-                    <td className="border border-gray-300 px-4 py-2">
-                      {user.name}
-                    </td>
-                    <td className="border border-gray-300 px-4 py-2">
-                      {user.email}
-                    </td>
-                    <td className="border border-gray-300 px-4 py-2">
+                    <td>{user.name}</td>
+                    <td>{user.email}</td>
+                    <td>
                       <button
                         onClick={() => handleFavorite(user.id)}
-                        className={`px-2 py-1 rounded ${
+                        className={`btn btn-sm ${
                           favorites.includes(user.id)
-                            ? "bg-green-500 text-white"
-                            : "bg-gray-300"
+                            ? "btn-warning"
+                            : "btn-outline-secondary"
                         }`}
                       >
-                        {favorites.includes(user.id)
-                          ? "Unfavorite"
-                          : "Favorite"}
+                        {favorites.includes(user.id) ? "★" : "☆"}
                       </button>
                     </td>
-                    <td className="border border-gray-300 px-4 py-2">
+                    <td>
                       <button
                         onClick={() => navigate(`/details/${user.id}`)}
-                        className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
+                        className="btn btn-sm btn-primary"
                       >
                         View Details
                       </button>
@@ -129,55 +136,40 @@ const DashboardPage = () => {
                 ))}
               </tbody>
             </table>
-
-            {/* Batch Actions */}
-            <div className="mt-4 flex gap-4">
-              <button
-                onClick={handleDelete}
-                disabled={selectedUsers.length === 0}
-                className={`px-4 py-2 rounded ${
-                  selectedUsers.length === 0
-                    ? "bg-gray-300 cursor-not-allowed"
-                    : "bg-red-500 text-white hover:bg-red-600"
-                }`}
-              >
-                Delete Selected
-              </button>
-            </div>
-
-            {/* Pagination Controls */}
-            <div className="flex justify-between items-center mt-4">
+          </div>
+          <div className="card-footer d-flex justify-content-between align-items-center">
+            <button
+              onClick={handleDelete}
+              disabled={selectedUsers.length === 0}
+              className={`btn btn-danger ${
+                selectedUsers.length === 0 && "disabled"
+              }`}
+            >
+              Delete Selected ({selectedUsers.length})
+            </button>
+            <div className="pagination d-flex gap-2 align-items-center">
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className={`px-4 py-2 rounded ${
-                  currentPage === 1
-                    ? "bg-gray-300 cursor-not-allowed"
-                    : "bg-blue-500 text-white hover:bg-blue-600"
-                }`}
+                className="btn btn-outline-primary"
               >
                 Previous
               </button>
-              <span>
+              <span className="text-muted">
                 Page {currentPage} of {totalPages}
               </span>
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className={`px-4 py-2 rounded ${
-                  currentPage === totalPages
-                    ? "bg-gray-300 cursor-not-allowed"
-                    : "bg-blue-500 text-white hover:bg-blue-600"
-                }`}
+                className="btn btn-outline-primary"
               >
                 Next
               </button>
             </div>
-          </>
-        )}
-      </main>
-      <Footer />
-    </>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
