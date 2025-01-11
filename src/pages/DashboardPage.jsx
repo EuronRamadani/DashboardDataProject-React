@@ -8,6 +8,8 @@ import {
 } from "../store/modules/usersSlice";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 const DashboardPage = () => {
   const dispatch = useDispatch();
@@ -72,104 +74,108 @@ const DashboardPage = () => {
   }
 
   return (
-    <div className="d-flex flex-column justify-content-center align-items-center vh-100">
-      <div className="container">
-        <div className="card shadow-lg">
-          <div className="card-header text-center bg-primary text-white">
-            <h2 className="mb-0">Dashboard</h2>
-          </div>
-          <div className="table-responsive">
-            <table className="table table-striped table-hover text-center align-middle">
-              <thead className="table-primary">
-                <tr>
-                  <th scope="col">
-                    <input
-                      type="checkbox"
-                      onChange={handleSelectAll}
-                      checked={
-                        selectedUsers.length === paginatedUsers.length &&
-                        selectedUsers.length > 0
-                      }
-                      className="form-check-input"
-                    />
-                  </th>
-                  <th scope="col">Name</th>
-                  <th scope="col">Email</th>
-                  <th scope="col">Favorite</th>
-                  <th scope="col">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {paginatedUsers.map((user) => (
-                  <tr key={user.id}>
-                    <td>
+    <>
+      <Header />
+      <div className="d-flex flex-column justify-content-center align-items-center vh-100">
+        <div className="container">
+          <div className="card shadow-lg">
+            <div className="card-header text-center bg-primary text-white">
+              <h2 className="mb-0">Dashboard</h2>
+            </div>
+            <div className="table-responsive">
+              <table className="table table-striped table-hover text-center align-middle">
+                <thead className="table-primary">
+                  <tr>
+                    <th scope="col">
                       <input
                         type="checkbox"
-                        checked={selectedUsers.includes(user.id)}
-                        onChange={() => handleSelectUser(user.id)}
+                        onChange={handleSelectAll}
+                        checked={
+                          selectedUsers.length === paginatedUsers.length &&
+                          selectedUsers.length > 0
+                        }
                         className="form-check-input"
                       />
-                    </td>
-                    <td>{user.name}</td>
-                    <td>{user.email}</td>
-                    <td>
-                      <button
-                        onClick={() => handleFavorite(user.id)}
-                        className={`btn btn-sm ${
-                          favorites.includes(user.id)
-                            ? "btn-warning"
-                            : "btn-outline-secondary"
-                        }`}
-                      >
-                        {favorites.includes(user.id) ? "★" : "☆"}
-                      </button>
-                    </td>
-                    <td>
-                      <button
-                        onClick={() => navigate(`/details/${user.id}`)}
-                        className="btn btn-sm btn-primary"
-                      >
-                        View Details
-                      </button>
-                    </td>
+                    </th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Favorite</th>
+                    <th scope="col">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div className="card-footer d-flex justify-content-between align-items-center">
-            <button
-              onClick={handleDelete}
-              disabled={selectedUsers.length === 0}
-              className={`btn btn-danger ${
-                selectedUsers.length === 0 && "disabled"
-              }`}
-            >
-              Delete Selected ({selectedUsers.length})
-            </button>
-            <div className="pagination d-flex gap-2 align-items-center">
+                </thead>
+                <tbody>
+                  {paginatedUsers.map((user) => (
+                    <tr key={user.id}>
+                      <td>
+                        <input
+                          type="checkbox"
+                          checked={selectedUsers.includes(user.id)}
+                          onChange={() => handleSelectUser(user.id)}
+                          className="form-check-input"
+                        />
+                      </td>
+                      <td>{user.name}</td>
+                      <td>{user.email}</td>
+                      <td>
+                        <button
+                          onClick={() => handleFavorite(user.id)}
+                          className={`btn btn-sm ${
+                            favorites.includes(user.id)
+                              ? "btn-warning"
+                              : "btn-outline-secondary"
+                          }`}
+                        >
+                          {favorites.includes(user.id) ? "★" : "☆"}
+                        </button>
+                      </td>
+                      <td>
+                        <button
+                          onClick={() => navigate(`/details/${user.id}`)}
+                          className="btn btn-sm btn-primary"
+                        >
+                          View Details
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="card-footer d-flex justify-content-between align-items-center">
               <button
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                className="btn btn-outline-primary"
+                onClick={handleDelete}
+                disabled={selectedUsers.length === 0}
+                className={`btn btn-danger ${
+                  selectedUsers.length === 0 && "disabled"
+                }`}
               >
-                Previous
+                Delete Selected ({selectedUsers.length})
               </button>
-              <span className="text-muted">
-                Page {currentPage} of {totalPages}
-              </span>
-              <button
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className="btn btn-outline-primary"
-              >
-                Next
-              </button>
+              <div className="pagination d-flex gap-2 align-items-center">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="btn btn-outline-primary"
+                >
+                  Previous
+                </button>
+                <span className="text-muted">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="btn btn-outline-primary"
+                >
+                  Next
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+      <Footer />
+    </>
   );
 };
 
