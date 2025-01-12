@@ -41,6 +41,17 @@ const DetailPage = () => {
     }));
   };
 
+  const handleNestedInputChange = (e, key, nestedKey) => {
+    const { name, value } = e.target;
+    setEditedUser((prevState) => ({
+      ...prevState,
+      [key]: {
+        ...prevState[key],
+        [nestedKey || name]: value,
+      },
+    }));
+  };
+
   const handleSave = () => {
     dispatch(updateUser(editedUser));
     setIsEditing(false);
@@ -81,6 +92,7 @@ const DetailPage = () => {
           <h2>{isEditing ? "Edit User Details" : "User Details"}</h2>
         </div>
         <div className="card-body">
+          {/* Name */}
           <div className="mb-3">
             <label className="form-label">Name:</label>
             {isEditing ? (
@@ -95,6 +107,8 @@ const DetailPage = () => {
               <p>{selectedUser.name}</p>
             )}
           </div>
+
+          {/* Email */}
           <div className="mb-3">
             <label className="form-label">Email:</label>
             {isEditing ? (
@@ -109,6 +123,8 @@ const DetailPage = () => {
               <p>{selectedUser.email}</p>
             )}
           </div>
+
+          {/* Phone */}
           <div className="mb-3">
             <label className="form-label">Phone:</label>
             {isEditing ? (
@@ -123,6 +139,8 @@ const DetailPage = () => {
               <p>{selectedUser.phone}</p>
             )}
           </div>
+
+          {/* Website */}
           <div className="mb-3">
             <label className="form-label">Website:</label>
             {isEditing ? (
@@ -137,7 +155,73 @@ const DetailPage = () => {
               <p>{selectedUser.website}</p>
             )}
           </div>
+
+          {/* Address */}
+          <div className="mb-3">
+            <label className="form-label">Address:</label>
+            {isEditing ? (
+              <>
+                <input
+                  type="text"
+                  className="form-control mb-2"
+                  placeholder="Street"
+                  value={editedUser.address.street}
+                  onChange={(e) =>
+                    handleNestedInputChange(e, "address", "street")
+                  }
+                />
+                <input
+                  type="text"
+                  className="form-control mb-2"
+                  placeholder="Suite"
+                  value={editedUser.address.suite}
+                  onChange={(e) =>
+                    handleNestedInputChange(e, "address", "suite")
+                  }
+                />
+                <input
+                  type="text"
+                  className="form-control mb-2"
+                  placeholder="City"
+                  value={editedUser.address.city}
+                  onChange={(e) =>
+                    handleNestedInputChange(e, "address", "city")
+                  }
+                />
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Zipcode"
+                  value={editedUser.address.zipcode}
+                  onChange={(e) =>
+                    handleNestedInputChange(e, "address", "zipcode")
+                  }
+                />
+              </>
+            ) : (
+              <p>
+                {selectedUser.address.street}, {selectedUser.address.suite},{" "}
+                {selectedUser.address.city}, {selectedUser.address.zipcode}
+              </p>
+            )}
+          </div>
+
+          {/* Company */}
+          <div className="mb-3">
+            <label className="form-label">Company:</label>
+            {isEditing ? (
+              <input
+                type="text"
+                className="form-control"
+                value={editedUser.company.name}
+                onChange={(e) => handleNestedInputChange(e, "company", "name")}
+              />
+            ) : (
+              <p>{selectedUser.company.name}</p>
+            )}
+          </div>
         </div>
+
         <div className="card-footer d-flex justify-content-between">
           <button
             className="btn btn-secondary"

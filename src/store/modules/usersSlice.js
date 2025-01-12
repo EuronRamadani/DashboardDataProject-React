@@ -22,9 +22,7 @@ export const updateUser = createAsyncThunk(
       `https://jsonplaceholder.typicode.com/users/${updatedUser.id}`,
       {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedUser),
       }
     );
@@ -37,14 +35,12 @@ export const deleteUser = createAsyncThunk(
   async (userId) => {
     const response = await fetch(
       `https://jsonplaceholder.typicode.com/users/${userId}`,
-      {
-        method: "DELETE",
-      }
+      { method: "DELETE" }
     );
     if (!response.ok) {
       throw new Error("Failed to delete user.");
     }
-    return userId; // Return the userId to update the Redux state
+    return userId;
   }
 );
 
@@ -53,16 +49,13 @@ export const createUser = createAsyncThunk(
   async (newUser) => {
     const response = await fetch("https://jsonplaceholder.typicode.com/users", {
       method: "POST",
+      headers: { "Content-Type": "application/json; charset=UTF-8" },
       body: JSON.stringify(newUser),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
     });
     if (!response.ok) {
       throw new Error("Failed to create user.");
     }
-    const data = await response.json();
-    return data; // Return the created user data
+    return response.json();
   }
 );
 
@@ -151,17 +144,17 @@ const usersSlice = createSlice({
         const start = (state.currentPage - 1) * state.rowsPerPage;
         const end = start + state.rowsPerPage;
         state.paginatedUsers = state.users.slice(start, end);
-
         state.selectedUser = action.payload;
+      })
+      .addCase(updateUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
       })
       .addCase(deleteUser.fulfilled, (state, action) => {
         state.loading = false;
         const userIdToDelete = action.payload;
-
-        // Remove the user from the users array
         state.users = state.users.filter((user) => user.id !== userIdToDelete);
 
-        // Update paginated users and total pages
         const start = (state.currentPage - 1) * state.rowsPerPage;
         const end = start + state.rowsPerPage;
         state.paginatedUsers = state.users.slice(start, end);
@@ -171,7 +164,18 @@ const usersSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
-      .addCase(updateUser.rejected, (state, action) => {
+      .addCase(createUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(createUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.users.unshift(action.payload);
+        const start = (state.currentPage - 1) * state.rowsPerPage;
+        const end = start + state.rowsPerPage;
+        state.paginatedUsers = state.users.slice(start, end);
+        state.totalPages = Math.ceil(state.users.length / state.rowsPerPage);
+      })
+      .addCase(createUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });
