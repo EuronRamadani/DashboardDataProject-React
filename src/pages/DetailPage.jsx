@@ -19,13 +19,13 @@ const DetailPage = () => {
   useEffect(() => {
     dispatch(fetchUserById(id));
     return () => {
-      dispatch(clearSelectedUser()); // Clear user on unmount
+      dispatch(clearSelectedUser());
     };
   }, [dispatch, id]);
 
   useEffect(() => {
     if (selectedUser) {
-      setEditedUser({ ...selectedUser }); // Initialize editable fields
+      setEditedUser({ ...selectedUser });
     }
   }, [selectedUser]);
 
@@ -92,7 +92,6 @@ const DetailPage = () => {
           <h2>{isEditing ? "Edit User Details" : "User Details"}</h2>
         </div>
         <div className="card-body">
-          {/* Name */}
           <div className="mb-3">
             <label className="form-label">Name:</label>
             {isEditing ? (
@@ -108,7 +107,6 @@ const DetailPage = () => {
             )}
           </div>
 
-          {/* Email */}
           <div className="mb-3">
             <label className="form-label">Email:</label>
             {isEditing ? (
@@ -124,7 +122,6 @@ const DetailPage = () => {
             )}
           </div>
 
-          {/* Phone */}
           <div className="mb-3">
             <label className="form-label">Phone:</label>
             {isEditing ? (
@@ -140,7 +137,6 @@ const DetailPage = () => {
             )}
           </div>
 
-          {/* Website */}
           <div className="mb-3">
             <label className="form-label">Website:</label>
             {isEditing ? (
@@ -156,7 +152,6 @@ const DetailPage = () => {
             )}
           </div>
 
-          {/* Address */}
           <div className="mb-3">
             <label className="form-label">Address:</label>
             {isEditing ? (
@@ -206,7 +201,6 @@ const DetailPage = () => {
             )}
           </div>
 
-          {/* Company */}
           <div className="mb-3">
             <label className="form-label">Company:</label>
             {isEditing ? (

@@ -7,12 +7,10 @@ const Header = () => {
       <div className="container">
         <nav className="navbar navbar-expand-lg navbar-dark">
           <div className="container-fluid">
-            {/* Logo Section */}
             <Link to="/" className="navbar-brand fw-bold">
               React Dashboard
             </Link>
 
-            {/* Toggler for Mobile View */}
             <button
               className="navbar-toggler"
               type="button"
@@ -25,7 +23,6 @@ const Header = () => {
               <span className="navbar-toggler-icon"></span>
             </button>
 
-            {/* Navigation Links */}
             <div className="collapse navbar-collapse" id="navbarNav">
               <ul className="navbar-nav ms-auto">
                 <li className="nav-item">

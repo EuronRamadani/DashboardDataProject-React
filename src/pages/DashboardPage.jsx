@@ -79,17 +79,6 @@ const DashboardPage = () => {
       return 0;
     });
 
-  const handleNestedInputChange = (e, key, nestedKey) => {
-    const { name, value } = e.target;
-    setNewUser((prev) => ({
-      ...prev,
-      [key]: {
-        ...prev[key],
-        [nestedKey || name]: value,
-      },
-    }));
-  };
-
   const handleSelectAll = () => {
     if (selectedUsers.length === paginatedUsers.length) {
       setSelectedUsers([]);

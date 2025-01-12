@@ -7,10 +7,6 @@ const Footer = () => {
         <p className="mb-0">
           © 2025 <strong>TriveCoin</strong>. All rights reserved.
         </p>
-        <p className="mb-0">
-          {/* Built with ❤️ using <strong>React</strong> and{" "}
-          <strong>Bootstrap</strong>. */}
-        </p>
       </div>
     </footer>
   );

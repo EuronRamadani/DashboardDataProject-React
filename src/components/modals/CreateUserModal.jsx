@@ -37,7 +37,7 @@ const CreateUserModal = ({
 
   const handleCreate = () => {
     if (validateForm()) {
-      onCreate(); // Call the create function if the form is valid
+      onCreate();
     }
   };
 
