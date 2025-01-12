@@ -11,8 +11,7 @@ import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import CreateUserModal from "../components/modals/CreateUserModal";
 import DeleteConfirmationModal from "../components/modals/DeleteConfirmationModal";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 
 const DashboardPage = () => {
   const dispatch = useDispatch();
@@ -366,7 +365,6 @@ const DashboardPage = () => {
         onClose={() => setShowDeleteModal(false)}
         onDeleteConfirm={handleDeleteConfirm}
       />
-      <ToastContainer />
     </>
   );
 };

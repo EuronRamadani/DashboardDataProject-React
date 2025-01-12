@@ -6,6 +6,7 @@ import {
   clearSelectedUser,
   updateUser,
 } from "../store/modules/usersSlice";
+import { toast } from "react-toastify";
 
 const DetailPage = () => {
   const { id } = useParams();
@@ -68,6 +69,7 @@ const DetailPage = () => {
   }
 
   if (error) {
+    toast.error("An error occurred while loading user details.");
     return (
       <div className="d-flex justify-content-center align-items-center vh-100">
         <div className="alert alert-danger text-center">
@@ -78,6 +80,7 @@ const DetailPage = () => {
   }
 
   if (!selectedUser) {
+    // toast.warning("User not found.");
     return (
       <div className="d-flex justify-content-center align-items-center vh-100">
         <div className="alert alert-warning text-center">User not found.</div>
