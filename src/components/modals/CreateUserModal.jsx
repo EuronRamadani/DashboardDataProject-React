@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 const CreateUserModal = ({
   show,
@@ -8,7 +8,38 @@ const CreateUserModal = ({
   onNestedInputChange,
   onCreate,
 }) => {
+  const [errors, setErrors] = useState({});
+
   if (!show) return null;
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!newUser.name.trim()) newErrors.name = "Name is required.";
+    if (!newUser.username.trim()) newErrors.username = "Username is required.";
+    if (!newUser.email.trim()) {
+      newErrors.email = "Email is required.";
+    } else if (
+      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(newUser.email)
+    ) {
+      newErrors.email = "Invalid email address.";
+    }
+    if (!newUser.phone.trim()) newErrors.phone = "Phone number is required.";
+    if (!newUser.address.street.trim())
+      newErrors.street = "Street is required.";
+    if (!newUser.address.city.trim()) newErrors.city = "City is required.";
+    if (!newUser.address.zipcode.trim())
+      newErrors.zipcode = "Zip code is required.";
+    if (!newUser.company.name.trim())
+      newErrors.companyName = "Company name is required.";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleCreate = () => {
+    if (validateForm()) {
+      onCreate(); // Call the create function if the form is valid
+    }
+  };
 
   return (
     <div
@@ -39,6 +70,9 @@ const CreateUserModal = ({
                   value={newUser.name}
                   onChange={onInputChange}
                 />
+                {errors.name && (
+                  <small className="text-danger">{errors.name}</small>
+                )}
               </div>
               <div className="mb-3">
                 <label className="form-label">Username</label>
@@ -49,6 +83,9 @@ const CreateUserModal = ({
                   value={newUser.username}
                   onChange={onInputChange}
                 />
+                {errors.username && (
+                  <small className="text-danger">{errors.username}</small>
+                )}
               </div>
               <div className="mb-3">
                 <label className="form-label">Email</label>
@@ -59,6 +96,9 @@ const CreateUserModal = ({
                   value={newUser.email}
                   onChange={onInputChange}
                 />
+                {errors.email && (
+                  <small className="text-danger">{errors.email}</small>
+                )}
               </div>
               <div className="mb-3">
                 <label className="form-label">Phone</label>
@@ -69,6 +109,9 @@ const CreateUserModal = ({
                   value={newUser.phone}
                   onChange={onInputChange}
                 />
+                {errors.phone && (
+                  <small className="text-danger">{errors.phone}</small>
+                )}
               </div>
               <div className="mb-3">
                 <label className="form-label">Street</label>
@@ -78,6 +121,9 @@ const CreateUserModal = ({
                   value={newUser.address.street}
                   onChange={(e) => onNestedInputChange(e, "address", "street")}
                 />
+                {errors.street && (
+                  <small className="text-danger">{errors.street}</small>
+                )}
               </div>
               <div className="mb-3">
                 <label className="form-label">City</label>
@@ -87,6 +133,9 @@ const CreateUserModal = ({
                   value={newUser.address.city}
                   onChange={(e) => onNestedInputChange(e, "address", "city")}
                 />
+                {errors.city && (
+                  <small className="text-danger">{errors.city}</small>
+                )}
               </div>
               <div className="mb-3">
                 <label className="form-label">Zip Code</label>
@@ -96,6 +145,9 @@ const CreateUserModal = ({
                   value={newUser.address.zipcode}
                   onChange={(e) => onNestedInputChange(e, "address", "zipcode")}
                 />
+                {errors.zipcode && (
+                  <small className="text-danger">{errors.zipcode}</small>
+                )}
               </div>
               <div className="mb-3">
                 <label className="form-label">Company Name</label>
@@ -105,6 +157,9 @@ const CreateUserModal = ({
                   value={newUser.company.name}
                   onChange={(e) => onNestedInputChange(e, "company", "name")}
                 />
+                {errors.companyName && (
+                  <small className="text-danger">{errors.companyName}</small>
+                )}
               </div>
             </form>
           </div>
@@ -119,7 +174,7 @@ const CreateUserModal = ({
             <button
               type="button"
               className="btn btn-success"
-              onClick={onCreate}
+              onClick={handleCreate}
             >
               Create
             </button>

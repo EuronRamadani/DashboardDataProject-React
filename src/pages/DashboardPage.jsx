@@ -11,6 +11,8 @@ import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import CreateUserModal from "../components/modals/CreateUserModal";
 import DeleteConfirmationModal from "../components/modals/DeleteConfirmationModal";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const DashboardPage = () => {
   const dispatch = useDispatch();
@@ -104,12 +106,14 @@ const DashboardPage = () => {
     for (const userId of selectedUsers) {
       await dispatch(deleteUser(userId));
     }
+    toast.success("User(s) deleted successfully!");
     setSelectedUsers([]);
     setShowDeleteModal(false);
   };
 
   const handleCreateUser = async () => {
     await dispatch(createUser(newUser));
+    toast.success("User added successfully!");
     setNewUser({
       name: "",
       username: "",
@@ -132,6 +136,7 @@ const DashboardPage = () => {
   }
 
   if (error) {
+    toast.error("Error fetching data!");
     return (
       <div className="d-flex justify-content-center align-items-center vh-100">
         <div className="alert alert-danger text-center">
@@ -372,6 +377,7 @@ const DashboardPage = () => {
         onClose={() => setShowDeleteModal(false)}
         onDeleteConfirm={handleDeleteConfirm}
       />
+      <ToastContainer />
     </>
   );
 };
