@@ -9,8 +9,8 @@ import {
 } from "../store/modules/usersSlice";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import CreateUserModal from "../components/modals/CreateUserModal";
+import DeleteConfirmationModal from "../components/modals/DeleteConfirmationModal";
 
 const DashboardPage = () => {
   const dispatch = useDispatch();
@@ -18,6 +18,8 @@ const DashboardPage = () => {
 
   const { paginatedUsers, currentPage, totalPages, loading, error, favorites } =
     useSelector((state) => state.users);
+  const [sortBy, setSortBy] = useState("");
+  const [filterText, setFilterText] = useState("");
 
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -53,6 +55,27 @@ const DashboardPage = () => {
       [name]: value,
     }));
   };
+
+  const handleFilterChange = (e) => {
+    setFilterText(e.target.value.toLowerCase());
+  };
+
+  const handleSortChange = (column) => {
+    setSortBy(column);
+  };
+
+  const filteredAndSortedUsers = [...paginatedUsers]
+    .filter(
+      (user) =>
+        user.name.toLowerCase().includes(filterText) ||
+        user.username.toLowerCase().includes(filterText)
+    )
+    .sort((a, b) => {
+      if (!sortBy) return 0;
+      if (a[sortBy] < b[sortBy]) return -1;
+      if (a[sortBy] > b[sortBy]) return 1;
+      return 0;
+    });
 
   const handleNestedInputChange = (e, key, nestedKey) => {
     const { name, value } = e.target;
@@ -120,20 +143,30 @@ const DashboardPage = () => {
 
   return (
     <>
-      <Header />
-      <div className="container mt-4">
+      <div className="container mt-4 ">
         <div className="mb-3 text-end">
           <button
             className="btn btn-success"
-            onClick={() => setShowCreateModal(true)} // Open the create user modal
+            onClick={() => setShowCreateModal(true)}
           >
             + Create User
           </button>
         </div>
         <div className="card shadow-lg">
-          <div className="card-header text-center bg-primary text-white">
-            <h2 className="mb-0">Dashboard</h2>
+          <div className="card-header bg-primary text-white">
+            <div className="row align-items-center g-3">
+              <div className="col-12 col-md-6">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Search by name or username..."
+                  value={filterText}
+                  onChange={handleFilterChange}
+                />
+              </div>
+            </div>
           </div>
+
           <div className="table-responsive">
             <table className="table table-striped table-hover text-center align-middle">
               <thead className="table-primary">
@@ -149,18 +182,99 @@ const DashboardPage = () => {
                       className="form-check-input"
                     />
                   </th>
-                  <th scope="col">Name</th>
-                  <th scope="col">Username</th>
-                  <th scope="col">Email</th>
+                  <th
+                    scope="col"
+                    onClick={() => handleSortChange("name")}
+                    className="sortable"
+                  >
+                    Name
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      class="bi bi-arrow-down"
+                      viewBox="0 0 16 16"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1"
+                      />
+                    </svg>
+                  </th>
+                  <th
+                    scope="col"
+                    onClick={() => handleSortChange("username")}
+                    className="sortable "
+                  >
+                    <div className="w-100 d-flex align-items-center">
+                      Username
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        class="bi bi-arrow-down"
+                        viewBox="0 0 16 16"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1"
+                        />
+                      </svg>
+                    </div>
+                  </th>
+                  <th
+                    scope="col"
+                    onClick={() => handleSortChange("email")}
+                    className="sortable"
+                  >
+                    Email
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      class="bi bi-arrow-down"
+                      viewBox="0 0 16 16"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1"
+                      />
+                    </svg>
+                  </th>
                   <th scope="col">Phone Number</th>
                   <th scope="col">Address</th>
-                  <th scope="col">Company Name</th>
+                  <th
+                    scope="col"
+                    onClick={() => handleSortChange("company.name")}
+                    className="sortable"
+                  >
+                    <div className="w-100 d-flex align-items-center">
+                      Company Name
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        class="bi bi-arrow-down"
+                        viewBox="0 0 16 16"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1"
+                        />
+                      </svg>
+                    </div>
+                  </th>
                   <th scope="col">Favorite</th>
                   <th scope="col">Actions</th>
                 </tr>
               </thead>
+
               <tbody>
-                {paginatedUsers.map((user) => (
+                {filteredAndSortedUsers.map((user) => (
                   <tr key={user.id}>
                     <td>
                       <input
@@ -206,7 +320,7 @@ const DashboardPage = () => {
           </div>
           <div className="card-footer d-flex justify-content-between align-items-center">
             <button
-              onClick={() => setShowDeleteModal(true)} // Open delete confirmation modal
+              onClick={() => setShowDeleteModal(true)}
               disabled={selectedUsers.length === 0}
               className={`btn btn-danger ${
                 selectedUsers.length === 0 && "disabled"
@@ -223,7 +337,7 @@ const DashboardPage = () => {
                 Previous
               </button>
               <span className="text-muted">
-                Page {currentPage} of {totalPages}
+                {currentPage} of {totalPages}
               </span>
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
@@ -237,177 +351,27 @@ const DashboardPage = () => {
         </div>
       </div>
 
-      {/* Create User Modal */}
-      {showCreateModal && (
-        <div
-          className="modal fade show d-block"
-          tabIndex="-1"
-          role="dialog"
-          style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
-        >
-          <div className="modal-dialog" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Create New User</h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  aria-label="Close"
-                  onClick={() => setShowCreateModal(false)}
-                ></button>
-              </div>
-              <div className="modal-body">
-                <form>
-                  <div className="mb-3">
-                    <label className="form-label">Name</label>
-                    <input
-                      type="text"
-                      name="name"
-                      className="form-control"
-                      value={newUser.name}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">Username</label>
-                    <input
-                      type="text"
-                      name="username"
-                      className="form-control"
-                      value={newUser.username}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">Email</label>
-                    <input
-                      type="email"
-                      name="email"
-                      className="form-control"
-                      value={newUser.email}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">Phone</label>
-                    <input
-                      type="text"
-                      name="phone"
-                      className="form-control"
-                      value={newUser.phone}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">Street</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={newUser.address.street}
-                      onChange={(e) =>
-                        handleNestedInputChange(e, "address", "street")
-                      }
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">City</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={newUser.address.city}
-                      onChange={(e) =>
-                        handleNestedInputChange(e, "address", "city")
-                      }
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">Zip Code</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={newUser.address.zipcode}
-                      onChange={(e) =>
-                        handleNestedInputChange(e, "address", "zipcode")
-                      }
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">Company Name</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={newUser.company.name}
-                      onChange={(e) =>
-                        handleNestedInputChange(e, "company", "name")
-                      }
-                    />
-                  </div>
-                </form>
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() => setShowCreateModal(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-success"
-                  onClick={handleCreateUser}
-                >
-                  Create
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <CreateUserModal
+        show={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        newUser={newUser}
+        onInputChange={(e) =>
+          setNewUser({ ...newUser, [e.target.name]: e.target.value })
+        }
+        onNestedInputChange={(e, key, nestedKey) =>
+          setNewUser((prev) => ({
+            ...prev,
+            [key]: { ...prev[key], [nestedKey]: e.target.value },
+          }))
+        }
+        onCreate={handleCreateUser}
+      />
 
-      {/* Delete Confirmation Modal */}
-      {showDeleteModal && (
-        <div
-          className="modal fade show d-block"
-          tabIndex="-1"
-          role="dialog"
-          style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
-        >
-          <div className="modal-dialog" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Confirm Delete</h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  aria-label="Close"
-                  onClick={() => setShowDeleteModal(false)} // Close the modal
-                ></button>
-              </div>
-              <div className="modal-body">
-                <p>Are you sure you want to delete the selected users?</p>
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() => setShowDeleteModal(false)} // Cancel action
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-danger"
-                  onClick={handleDeleteConfirm}
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-      <Footer />
+      <DeleteConfirmationModal
+        show={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onDeleteConfirm={handleDeleteConfirm}
+      />
     </>
   );
 };
