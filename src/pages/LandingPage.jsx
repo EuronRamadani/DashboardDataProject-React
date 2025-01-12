@@ -6,7 +6,7 @@ const LandingPage = () => {
   return (
     <>
       <Header />
-      <main className="container mx-auto p-4">
+      <main className="container mx-auto p-4 d-flex flex-column align-items-center mt-5">
         <h2 className="text-2xl font-bold mb-4">Welcome to React Dashboard!</h2>
         <p>Explore the dashboard to view and manage data interactively.</p>
       </main>

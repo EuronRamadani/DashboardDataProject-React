@@ -4,7 +4,7 @@ import {
   fetchUsers,
   setPage,
   toggleFavorite,
-  deleteUsers,
+  deleteUser,
 } from "../store/modules/usersSlice";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -19,6 +19,7 @@ const DashboardPage = () => {
     useSelector((state) => state.users);
 
   const [selectedUsers, setSelectedUsers] = useState([]);
+  const [showModal, setShowModal] = useState(false); // Modal state
 
   useEffect(() => {
     dispatch(fetchUsers());
@@ -48,9 +49,16 @@ const DashboardPage = () => {
     dispatch(toggleFavorite(id));
   };
 
-  const handleDelete = () => {
-    dispatch(deleteUsers(selectedUsers));
-    setSelectedUsers([]);
+  const handleDeleteConfirm = async () => {
+    for (const userId of selectedUsers) {
+      await dispatch(deleteUser(userId)); // Delete each selected user
+    }
+    setSelectedUsers([]); // Clear selected users
+    setShowModal(false); // Close the modal
+  };
+
+  const handleDeleteClick = () => {
+    setShowModal(true); // Show the confirmation modal
   };
 
   if (loading) {
@@ -76,7 +84,7 @@ const DashboardPage = () => {
   return (
     <>
       <Header />
-      <div className="d-flex flex-column justify-content-center align-items-center vh-100">
+      <div className="align-items-center vh-100">
         <div className="container">
           <div className="card shadow-lg">
             <div className="card-header text-center bg-primary text-white">
@@ -143,7 +151,7 @@ const DashboardPage = () => {
             </div>
             <div className="card-footer d-flex justify-content-between align-items-center">
               <button
-                onClick={handleDelete}
+                onClick={handleDeleteClick} // Open the modal
                 disabled={selectedUsers.length === 0}
                 className={`btn btn-danger ${
                   selectedUsers.length === 0 && "disabled"
@@ -174,6 +182,49 @@ const DashboardPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {showModal && (
+        <div
+          className="modal fade show d-block"
+          tabIndex="-1"
+          role="dialog"
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+        >
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Confirm Delete</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  aria-label="Close"
+                  onClick={() => setShowModal(false)} // Close the modal
+                ></button>
+              </div>
+              <div className="modal-body">
+                <p>Are you sure you want to delete the selected users?</p>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setShowModal(false)} // Cancel action
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={handleDeleteConfirm}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       <Footer />
     </>
   );

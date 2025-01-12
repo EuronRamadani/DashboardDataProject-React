@@ -1,13 +1,20 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchUserById, clearSelectedUser } from "../store/modules/usersSlice";
+import {
+  fetchUserById,
+  clearSelectedUser,
+  updateUser,
+} from "../store/modules/usersSlice";
 
 const DetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { selectedUser, loading, error } = useSelector((state) => state.users);
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedUser, setEditedUser] = useState(null);
 
   useEffect(() => {
     dispatch(fetchUserById(id));
@@ -16,43 +23,147 @@ const DetailPage = () => {
     };
   }, [dispatch, id]);
 
+  useEffect(() => {
+    if (selectedUser) {
+      setEditedUser({ ...selectedUser }); // Initialize editable fields
+    }
+  }, [selectedUser]);
+
+  const handleEditToggle = () => {
+    setIsEditing(!isEditing);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditedUser((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleSave = () => {
+    dispatch(updateUser(editedUser));
+    setIsEditing(false);
+  };
+
   if (loading) {
-    return <p>Loading user details...</p>;
+    return (
+      <div className="d-flex justify-content-center align-items-center vh-100">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading user details...</span>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
-    return <p className="text-red-500">Error: {error}</p>;
+    return (
+      <div className="d-flex justify-content-center align-items-center vh-100">
+        <div className="alert alert-danger text-center">
+          <strong>Error:</strong> {error}
+        </div>
+      </div>
+    );
   }
 
   if (!selectedUser) {
-    return <p>User not found.</p>;
+    return (
+      <div className="d-flex justify-content-center align-items-center vh-100">
+        <div className="alert alert-warning text-center">User not found.</div>
+      </div>
+    );
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-4">User Details</h2>
-      <div className="mb-2">
-        <label className="block font-bold">Name:</label>
-        <p>{selectedUser.name}</p>
+    <div className="container py-5">
+      <div className="card shadow-lg">
+        <div className="card-header bg-primary text-white text-center">
+          <h2>{isEditing ? "Edit User Details" : "User Details"}</h2>
+        </div>
+        <div className="card-body">
+          <div className="mb-3">
+            <label className="form-label">Name:</label>
+            {isEditing ? (
+              <input
+                type="text"
+                className="form-control"
+                name="name"
+                value={editedUser.name}
+                onChange={handleInputChange}
+              />
+            ) : (
+              <p>{selectedUser.name}</p>
+            )}
+          </div>
+          <div className="mb-3">
+            <label className="form-label">Email:</label>
+            {isEditing ? (
+              <input
+                type="email"
+                className="form-control"
+                name="email"
+                value={editedUser.email}
+                onChange={handleInputChange}
+              />
+            ) : (
+              <p>{selectedUser.email}</p>
+            )}
+          </div>
+          <div className="mb-3">
+            <label className="form-label">Phone:</label>
+            {isEditing ? (
+              <input
+                type="text"
+                className="form-control"
+                name="phone"
+                value={editedUser.phone}
+                onChange={handleInputChange}
+              />
+            ) : (
+              <p>{selectedUser.phone}</p>
+            )}
+          </div>
+          <div className="mb-3">
+            <label className="form-label">Website:</label>
+            {isEditing ? (
+              <input
+                type="text"
+                className="form-control"
+                name="website"
+                value={editedUser.website}
+                onChange={handleInputChange}
+              />
+            ) : (
+              <p>{selectedUser.website}</p>
+            )}
+          </div>
+        </div>
+        <div className="card-footer d-flex justify-content-between">
+          <button
+            className="btn btn-secondary"
+            onClick={() => navigate("/dashboard")}
+          >
+            Back to Dashboard
+          </button>
+          {isEditing ? (
+            <div>
+              <button
+                className="btn btn-danger me-2"
+                onClick={handleEditToggle}
+              >
+                Cancel
+              </button>
+              <button className="btn btn-success" onClick={handleSave}>
+                Save Changes
+              </button>
+            </div>
+          ) : (
+            <button className="btn btn-primary" onClick={handleEditToggle}>
+              Edit
+            </button>
+          )}
+        </div>
       </div>
-      <div className="mb-2">
-        <label className="block font-bold">Email:</label>
-        <p>{selectedUser.email}</p>
-      </div>
-      <div className="mb-2">
-        <label className="block font-bold">Phone:</label>
-        <p>{selectedUser.phone}</p>
-      </div>
-      <div className="mb-2">
-        <label className="block font-bold">Website:</label>
-        <p>{selectedUser.website}</p>
-      </div>
-      <button
-        onClick={() => navigate("/dashboard")}
-        className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-      >
-        Back to Dashboard
-      </button>
     </div>
   );
 };
